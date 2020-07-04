@@ -1,0 +1,311 @@
+#+TITLE: System design
+#+SETUPFILE: /home/bla/.emacs.custom/_repos/org-html-themes/setup/theme-readtheorg-temp.setup
+#+OPTIONS: ^:nil
+
+* The problem
+  How do people distinguish between true and false? Most of us do it
+  unconsciously; we have "a feeling" when we approach a new information and
+  decide emotionally - this gut feeling is based on our past experiences and
+  knowledge - gained mostly in school. It's also influenced a lot by our peers
+  and our cultural context. It's obviously not an objective process.
+
+  At the same time we are forced to play the true/false game more frequently,
+  when:
+  - deciding whether to like/forward information on some social media,
+  - listening to politicians and then voting,
+  - deciding whether to vaccinate our children,
+  - deciding to use chemotherapy or homeopathy,
+  - deciding whether to pay an invoice we got via an email or not,
+  - etc.
+
+  At scale, that's millions of badly informed decisions a day and a huge amount
+  of people which can be persuaded and controlled by information shared within
+  their "bubbles".
+
+  For some processes we've devised and use the [[https://en.wikipedia.org/wiki/Scientific_method][Scientific method]]. But we still
+  fail to apply it correctly, or simply don't have time for it in our everyday
+  life. So we have to trust our guts - or some authority.
+
+  Practical Method goes like this:
+  1) (optional) Google it.
+  2) (optional) Is it on Wikipedia?
+  3) (optional) Is there more than one result?
+  4) (optional) are the found sources "credible"?
+  4) It's TRUE/FALSE.
+
+* Current solutions
+** Wikipedia
+   Wikipedia has extensive rules regarding the content ([[https://en.wikipedia.org/wiki/Wikipedia:List_of_policies_and_guidelines][Wikipedia's policies]])
+   and they try to apply it - this is cool, might be difficult and is pretty
+   rare. Can be biased at times. Answering a question whether something is true by
+   using wikipedia requires some analysis and possibly checking linked sources.
+   It does not try to answer recent/subjective problems and is not systematical
+   about various points of view.
+
+** Twitter / Facebook
+   Facebook tries to be a neutral platform for any data and is not responsible
+   for its users' content. But they do moderation, people can report posts
+   (harassments, nudity, violence, hate speech, incorrect voting information,
+   etc.), it's just not really that transparent. Most of it is crowd-sourced and
+   they don't remove stuff only because it's untrue.
+
+   Using Facebook, you're mosly seeing things that your friends like or share,
+   and you're presented with the point of view of your "bubble". You can't
+   change the perspective and it's not explicit.
+
+   Other sites (Twitter, Facebook) have some non-transparent policies of
+   moderation. Twitter recently is marking false information.
+
+** Internet
+   Some sites are biased by definition (forums, parts of Reddit like
+   r/flatearth) and it can be ok if it's explicit.
+
+   Stackoverflow - topical, usually on technical objective topics, with up/down
+   voting and an "accepted" answer.
+
+** Science
+   Articles on topics which mostly should correctly use statistics/science
+   method to prove some hypothesis. Quality is ensured by using a peer-review.
+
+   Process is slow, can be biased, articles usually have to be paid to be
+   published, then are paywalled and not available for broad public except
+   universities, process can be biased and often is non-transparent. It's the
+   best we have, yet we could do better.
+
+   There's a bias where negative results are much sparingly published than
+   positive results.
+
+* TODO Examples
+  Examples and edge cases to evaluate the idea itself.
+  Truth can be objective (but our understanding of it, can change):
+  - physics, biology, chemistry,
+  - evidence based medicine, including applicability of various treatments to
+    certain illnesses,
+  - decisions made by politician, votes or statements issued by public people,
+  - text written by an author in a book (with some context)
+
+  or totally subjective and depending on the point of view:
+  - Religion: the same dogma can be believed true or false depending on the
+    church you ask.
+  - Politics: depending on which party you will ask you will get various ideas
+    on how to run country,
+  - book author's beliefs assumed from a book text (not the same as the
+    protagonists beliefs).
+
+
+* TODO Technical discussion
+  A different open source project which holds a huge graph-like dataset is
+  OpenStreetMap. Some ideas should be applicable.
+
+** TODO Components
+*** Database
+    In general there must be 2 types of entities in database:
+    - A node with properties
+    - An edge with properties which relates to two nodes.
+
+    Some properties can be assumed early, some would be defined dynamically:
+    - UUID
+    - author,
+    - creation date,
+    - modification date,
+    - dataset id (?) (to group a batch of changes, OSM-like).
+    - type
+    - ... TODO
+
+    In relation to the: OSM, database is a separate asset, downloadable as a
+    whole to experiment with, available via a generic API to alter the main
+    database with various tools.
+
+    OSM AFAIK uses postgresql to hold the data which is ok, maybe some graph
+    databases would be better, but have to scale well (neo4j?). This could
+    probably be a MongoDB, Elasticsearch or Cassandra as well.
+
+    Two separate graphs can be tracked:
+    - Neutral statement graph (statement, source, author, etc.)
+    - Social relation graph (user trusts a university, or person, or group,
+      university trusts author, author works at university).
+
+*** Data API
+    Service allowing authenticated CRUD operations on the data.
+
+    Some data after creation should be immutable, some could be removed by it's
+    author only.
+
+*** Statement evaluator
+    Algorithm which traverses the data graph and evaluates a
+    consensus/truthfulness values according to a given algorithm.
+
+    Algorithm should be transparent and replacable to see how changing it alters
+    the final results.
+
+**** Evaluation cache
+     Probably parts of the data graph would have to be pre-evaluated to limit
+     the depth of the evaluation. This should be kept separately from the data
+     itself.
+
+*** Web interface
+    Main web interface for the API which allows to browse the data, evaluate
+    statements and alter the data.
+
+*** Migrators
+    - Priming the data with statements from wikipedia is one idea.
+    - Priming the data with science articles/abstracts and then hand-correcting
+      the results is second one.
+
+    Migrated data would have to be marked strongly and maybe not be
+    immutable in the beginning.
+
+** TODO Data model
+   List properties, related behaviours.
+
+*** Node types
+
+**** Main types
+     - Axiom - statement that is not evaluated per se, but can be marked as
+       agreed/disagreed by users in graph. It should only be used for most
+       simple and basic problems to "end" the evaluation at some point.
+     - Statement - for evaluation, usually a short text ending with a period. It
+       can be marked to be believed to be true or evaluated from more basic
+       axioms. It could be an URL to youtube video.
+     - Expression - for a mathematical evaluation of a values from a "source
+       values" - numerical axioms. Distributed graph-based spread sheet.
+
+**** Sources
+     - Article (source/context)
+     - URL (source)
+     - Author
+     - ...
+
+**** Grouping nodes
+     Should those be a properties with a dict instead? If there's a many-to-many
+     relation, then probably keeping them as a node is fine.
+
+     - Category
+     - Geographic location
+     - Language
+     - Trust network
+     - ...
+
+*** Edge types
+    - author
+    - source
+    - context
+    - belongs_to (category, country, language)
+    - ...
+
+*** Metrics
+    - "is it objectively true?" - tracking the objective truth from the axioms.
+      It should be based on something (source, article, etc)
+    - "do we believe it's true?" - anything can be marked as believed true
+      without giving valid reason, but we treat it separately.
+
+    Is there a point in treating this metrics separately? Or it's always a
+    believe of some kind.
+
+    It might be impossible to evaluate something as either true or false,
+    because it mixes multiples ditinct statements, some of which are ok, but the
+    final premise is flawed. So the logic probably should be a tri-state: true,
+    false, invalid.
+
+    - "is this statement valid?" - could be tracked separately.
+
+    Sometimes we want to agree on a numeric value which might be required to
+    evaluate truthfulness of some statements. Like, from few axioms describing a
+    macroeconomic situation of a country (with sources) derive some other value.
+    Nodes could define a mathematical expressions to contruct a value from
+    axioms - a distributed
+
+** TODO Views
+
+*** TODO Common
+    Probably thin header with name, search, login info, bubble selection.
+    Having ability to return while analysing will be nice, so powerful "stack"
+    of "breadcrumbs".
+
+*** Statement/Expression view
+    Depending on the type of statement it should be centered, big, visible.
+    Below the possible evaluation of true/false/invalid state - which depend of
+    the current bubble.
+
+    Bubble definition.
+
+    Node type, connected categories, geo data.
+
+    Then, a direct neighbors of this nodes sorted by how they influence the
+    evaluation. Paginated if there are too many - but main could be presented
+    graphically, with animation shifting view to them on click with a fluent
+    animation to ease the user in tracking what's happening.
+
+*** Add new view
+    Select a node type.
+    Ability to paste/type the statement.
+    Search is executed which shows all matching/similar statements
+
+** TODO Use cases
+*** Checking sources or validating news.
+    You see a information on Facebook and want to check if it's true. You can
+    search for keywords or for some source URL.
+
+    Or you want to know if vitamin C really cures common cold?
+
+*** Discussing a topic.
+    You have an argument with someone and want to evaluate it:
+    - you both define a single statement within the system (if it's not already
+      there),
+    - you can work within your native trust bubble and build on it, or create an
+      empty bubble or use a public one and/or extend it.
+    - you gather evidence by adding sources, or linking existing ones to the
+      statement,
+    - you both can browse and compare each other's points of view and compare
+      supporting evidence. If necessary - go deeper and evaluate this evidence.
+      If not find a consensus, then at least find a base reason why you're not
+      agreeing on a matter - which might be much deeper.
+*** Diffing
+    Comparing how the given statement or group of statement is evaluated in
+    different bubbles.
+*** Combining trust networks.
+    Assuming the bubbles are labeled (some might be a group effort) we could see
+    how the data looks within different bubbles, or when the trust from two bubbles is
+    combined.
+
+** TODO Problems
+   - Vandals / bots: system can't accept anonymous inputs, or at least it must
+     label it as low.
+   - Bots can create multiple accounts and create a trust networks between them;
+     that's what's happenning on Twitter. It should be generally fine, but a
+     single user or a group of users must not be able to alter other bubbles of
+     trust.
+   - Bots/people can create fake identities to spoof authorities like university
+     professors. Having a public email domain can help maybe. In general it's
+     the university which should be asked to TRUST a person like that, but the
+     uni account can be spoofed as well. At this point it's a matter of what WE
+     agree with and trust initially - we mark some accounts of our friends and
+     we can mark a given accounts/nodes as trusted - which will propagate
+     further.
+
+   - Deduplication / linking
+   - Transparency would probably require an open database with public trust and
+     accounts. That creates problems with anonimity.
+   - Trusting someone could even be done with cryptographic signatures and have
+     an open, blockchain-like database but that would complicate the use a lot
+     for people. And this has to be simple.
+
+   - It might be beneficial for an organized social groups to maintain a set of
+     rules about their managed "bubble" - like, we mark a trust only related to
+     the scientific journals. A labeled public Bubble as a group effort.
+
+* Priming
+  It should be possible to prime the data using Wikipedia - with a known
+  authors, known origin (wiki), known source (linked after the sentence to the
+  external source of the data).
+
+* Futher tasks
+** TODO Check prior-art more thouroughly.
+** TODO Check if there's interest in doing a system like that.
+   I won't be doing it myself. Not enough time.
+** TODO Specify use-cases in detail.
+** TODO Do some mocks of basic views.
+** TODO Validate model against a complete use-cases.
+** TODO Define simple and scalable architecture.
+** TODO Select some basic technology.
+** TODO Define further development tasks.

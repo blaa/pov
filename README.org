@@ -1,0 +1,46 @@
+#+TITLE: Browseable knowledge graph with a source tracking.
+
+This is a description of a system idea - intro and a rough architectural
+sketch. I publish it so it might be useful or inspiring. I won't be able to do
+it myself anyway, but would love to discuss it.
+
+This file contains a brief introduction and the rest is in the [[file:design.org][Design notes]].
+
+* The problem
+  Determining what's true is hard, often important and should be easier. We do
+  it unconsciously, not-objectively and under the influence of the media,
+  authorities, our friends or foreign actors - our "bubble".
+
+  It always was bad, but with the current state of fake news and public
+  discussion we need better solutions.
+
+* Current solutions
+  Solutions vary and are not perfect (neutral Wikipedia with extensive rules,
+  peer-reviewed science journals or "we only deliver" Facebook/Twitter/Reddit -
+  with a non-transparent moderation).
+
+  Learning what's true is difficult on some topics, and learning WHY we believe
+  it's true, or how our understanding changed in time requires a lot of manual
+  research.
+
+* Proposition
+  System tracking atomic bits of information, sources, authors, votes and
+  relations between them, in order to help evaluate the information (eg. 82%
+  consensus that it's true) in respect to your explicitly chosen "bubble".
+
+  You can trust your friends, or universities, or wikipedia or certain news
+  sites. Your trusted sources (eg. uni) might trust some other sources (eg. a
+  publication author) and by extension you trust them. Using those relations
+  system can decide whether information is true or not.
+
+  You can get a simple answer, but can dig deeper to see "why", and the bubble
+  is visible and transparent. You can alter your trust, change opinion and see
+  how it reflects the results.
+
+  Example: "current inflation levels will help economy by 2023" and you could
+  see what your trusted people think about it (by voting, or trusting other
+  parties), what government thinks and what the opposition believes. Or, say,
+  evaluate whether "bleach/hydroxychloroquine cures covid-19" is true.
+
+  System tracks a graph of knowledge and a social-trust graphs which it can
+  intersect to evaluate various metrics.
