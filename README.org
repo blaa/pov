@@ -1,32 +1,38 @@
 #+TITLE: Browseable knowledge graph with a source tracking.
+#+STARTUP: noindent
 
-This is a description of a system idea - intro and a rough architectural
-sketch. I publish it so it might be useful or inspiring. I won't be able to do
-it myself anyway, but would love to discuss it.
-
-This file contains a brief introduction and the rest is in the [[file:design.org][Design notes]].
+This is a brief description of an idea to solve the fake news and misinformation
+problem. Longer take and more details are in in [[file:design.org][design notes]] file.
 
 * The problem
-  Determining what's true is hard, often important and should be easier. We do
+  Determining what's "true" is hard, often important and should be easier. We do
   it unconsciously, not-objectively and under the influence of the media,
-  authorities, our friends or foreign actors - our "bubble".
+  authorities, our friends or foreign actors - our "social bubble".
 
-  It always was bad, but with the current state of fake news and public
+  It was always bad, but with the current state of fake news and public
   discussion we need better solutions.
-
-* Current solutions
-  Solutions vary and are not perfect (neutral Wikipedia with extensive rules,
-  peer-reviewed science journals or "we only deliver" Facebook/Twitter/Reddit -
-  with a non-transparent moderation).
 
   Learning what's true is difficult on some topics, and learning WHY we believe
   it's true, or how our understanding changed in time requires a lot of manual
   research.
 
+* Current solutions
+  Solutions vary and are not perfect: neutral Wikipedia with extensive rules,
+  peer-reviewed science journals, social media Facebook/Twitter/Reddit - with a
+  non-transparent moderation and "we only deliver text" approach or public media
+  radio/tv under government influence).
+
+  There are personal knowledge graph applications, centered around a particular
+  research topics of a single person. Conceptually similar, but unable to
+  perform on a large scale and lacking simple cooperation or social functions.
+  See for a reference: Org (org-roam), Logseq, Obsidian, Roam research,
+  Zettelkasten.
+
 * Proposition
   System tracking atomic bits of information, sources, authors, votes and
   relations between them, in order to help evaluate the information (eg. 82%
-  consensus that it's true) in respect to your explicitly chosen "bubble".
+  consensus that it's true) in respect to your explicitly chosen and visible
+  "bubble".
 
   You can trust your friends, or universities, or wikipedia or certain news
   sites. Your trusted sources (eg. uni) might trust some other sources (eg. a
@@ -44,3 +50,20 @@ This file contains a brief introduction and the rest is in the [[file:design.org
 
   System tracks a graph of knowledge and a social-trust graphs which it can
   intersect to evaluate various metrics.
+
+  For instance, flatearthers and their statements could exist on this platform,
+  but it would be explicitly visible how separated their beliefs are from the
+  current state-of-the-art science. Sources and proofs of their statements could
+  be tracked and compared to the sources and proofs for spherical earth.
+
+* Problems with the solution
+  1. Even if moderation of the content itself could be deemed not necessary, it
+     still would be necessary to control the spam and bots and artificial,
+     automated fights over the content. Social trust, account authority could
+     help it a bit maybe.
+
+  2. A lot of content would have to be generated and tracked for the site to be
+     operational and useful. That would be a wikipedia-level effort to get
+     going.
+
+  3. Data would have to be linked and deduplicated, people are not good at this.

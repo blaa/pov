@@ -1,6 +1,10 @@
 #+TITLE: System design
 #+SETUPFILE: /home/bla/.emacs.custom/_repos/org-html-themes/setup/theme-readtheorg-temp.setup
 #+OPTIONS: ^:nil
+#+STARTUP: noindent
+
+I publish it so it might be useful or inspiring. I won't be able to do it myself
+anyway, but would love to discuss it.
 
 * The problem
   How do people distinguish between true and false? Most of us do it
@@ -306,6 +310,7 @@
 ** TODO Specify use-cases in detail.
 ** TODO Do some mocks of basic views.
 ** TODO Validate model against a complete use-cases.
+   Can it be made simpler while keeping functionalities?
 ** TODO Define simple and scalable architecture.
 ** TODO Select some basic technology.
 ** TODO Define further development tasks.
